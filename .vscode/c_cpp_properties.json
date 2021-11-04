@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "D:/Program Files/boost/include/boost-1_77"
+            ]
+        }
+    ],
+    "version": 4
+}
