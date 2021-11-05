@@ -17,14 +17,16 @@ namespace Timer {
         Timer() : timeStart(high_resolution_clock::now()){ }
         ~Timer() { };
 
-        void setTimeEnd();
-        float getElapsed() const;
+        void setTimeEnd  ();
+        void setTimeStart();
+        float getElapsed () const;
 
         friend std::ostream& operator<< (std::ostream& out, Timer& point) {
             return out << "SECONDS: " << point.getElapsed() << std::endl;
         }
     };
-    void  Timer::setTimeEnd()       { timeEnd = high_resolution_clock::now(); }
+    void  Timer::setTimeEnd()       { timeEnd = high_resolution_clock::now();   }
+    void  Timer::setTimeStart()     { timeStart = high_resolution_clock::now(); };
     float Timer::getElapsed() const { return duration<float>(timeEnd - timeStart).count(); }
 }
 #endif // _TIMER_HPP_

@@ -19,6 +19,8 @@ compile:
 compile_generator:
 	$(CXX) $(FLAG) $(SRC)/main_generator.cpp -o $(OUTPUT)/main_generator.exe -I$(INCLUDE)
 
+compile_automation:
+	$(CXX) $(FLAG) $(SRC)/main_automation.cpp -o $(OUTPUT)/main_automation.exe -I$(INCLUDE)
 
 run_test: clean_test compile_test
 	test/output/MCG_none.exe

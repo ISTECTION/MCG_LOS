@@ -42,7 +42,6 @@ void LOS<T>::none(bool isLog) {
     z = r;
     p = this->mult(z);
 
-    size_t Iter = 1;
     do {
         betta   = scalar(p, p);
         alpha   = scalar(p, r) / betta;
@@ -54,11 +53,12 @@ void LOS<T>::none(bool isLog) {
         p       = Ar + betta * p;
         eps     = scalar(r, r);
 
+        this->iter++;
         if (isLog)
-            printLog(Iter++, eps);
+            printLog(this->iter, eps);
 
-    } while (Iter < this->param.max_iter
-          && eps  > this->param.epsilon );
+    } while (this->iter < this->param.max_iter
+                && eps  > this->param.epsilon );
 }
 
 template <class T>
@@ -77,7 +77,6 @@ void LOS<T>::diagonal(bool isLog) {
     r = L * (this->pr - this->mult(this->x));
     z = L * r;
     p = L * this->mult(z);
-    size_t Iter = 1;
     do {
         betta = scalar(p, p);
         alpha = scalar(p, r) / betta;
@@ -88,11 +87,12 @@ void LOS<T>::diagonal(bool isLog) {
         p = L * this->mult(L * r) + betta * p;
         eps = scalar(r, r);
 
+        this->iter++;
         if (isLog)
-            printLog(Iter++, eps);
+            printLog(this->iter, eps);
 
-    } while (Iter < this->param.max_iter
-          && eps  > this->param.epsilon );
+    } while (this->iter < this->param.max_iter
+                && eps  > this->param.epsilon );
 
 }
 

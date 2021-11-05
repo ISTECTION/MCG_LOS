@@ -16,7 +16,7 @@ int getRandom(int _minValue, int _maxValue) {
 
     return (engine() % (_maxValue - _minValue) + _minValue);
 }
-bool getBool() { return getRandom(0, 2); }
+bool getBool() { return static_cast<bool>(getRandom(0, 2)); }
 
 
 struct Chance {
@@ -29,6 +29,7 @@ struct Vector {
     std::vector<size_t> ig, jg;
 };
 
+std::vector<double> getB(Vector _v);
 void writeFile(path, Vector, symmetric::Param, uint8_t _comma = 0);
 void write(path, std::vector<double> &, uint8_t);
 void write(path, std::vector<size_t> &, uint8_t);
@@ -96,17 +97,7 @@ void Generator::generateFile(path _path) {
                 _posi[i][j] += _none_Posi[i][k] * _none_Posi[k][j];
         }
 
-    std::vector<uint32_t> x(_param.n);
-    std::iota(x.begin(), x.end(), 1);
-
-    for (size_t i = 0; i < _param.n; i++) {
-        uint32_t _sum = 0;
-        for (size_t j = 0; j < _param.n; j++)
-            _sum += _posi[i][j] * x[j];
-
-        _v.pr[i] = _sum;
-    }
-
+    _v.pr = getB(_v);
     _v.gg.clear();
     _v.jg.clear();
 
@@ -132,8 +123,6 @@ void Generator::generateFile(path _path) {
 
     writeFile(_path, _v, _param);
 }
-
-
 
 class GenerateGilbert
 {
@@ -180,7 +169,72 @@ void GenerateGilbert::generateFile(path _path) {
         _v.ig[i + 1] = _Count;
     }
 
-    std::vector<uint32_t> x(_param.n);
+    _v.pr = getB(_v);
+    writeFile(_path, _v, _param, 14);
+}
+
+class Generate_Ak
+{
+private:
+    symmetric::Param _param;
+    Vector _v;
+    size_t k;
+
+    void generateFile(path _path);
+
+public:
+    Generate_Ak(path _path, size_t n, double eps, size_t max_iter, size_t k = 10)
+        : _param { n, eps, max_iter }, k(k) { generateFile(_path); };
+    ~Generate_Ak() { };
+
+};
+
+void Generate_Ak::generateFile(path _path) {
+
+    _path /= std::to_string(_param.n);
+    std::filesystem::create_directories(_path);
+
+    _v.di.resize(_param.n);
+    _v.pr.resize(_param.n);
+    _v.ig.resize(_param.n + 1);
+
+    _v.ig[0] = 0;
+
+    size_t _Count = 0;
+    for (size_t i = 0; i < _param.n; i++) {
+
+        for(size_t j = 0; j < i; j++) {
+
+            if (getBool()) {
+                _Count++;
+                _v.gg.push_back( -getRandom(1, 5) );
+                _v.jg.push_back(j);
+            }
+        }
+        _v.ig[i + 1] = _Count;
+    }
+
+    int jj = 0;
+    for (size_t i = 0; i < _param.n; i++)
+        for (size_t j = _v.ig[i]; j < _v.ig[i + 1]; j++, jj++) {
+            _v.di[_v.jg[jj]] += -_v.gg[jj];
+            _v.di[i] += -_v.gg[jj];
+        }
+
+    for (size_t i = 1; i < k + 1; i++) {
+        Vector _temp = _v;
+        _temp.di[0] += 1 / pow(10, i);
+        _temp.pr = getB(_temp);
+
+        std::filesystem::path _path_k = _path / std::to_string(i);
+        std::filesystem::create_directories(_path_k);
+        writeFile(_path_k, _temp, _param, 14);
+    }
+}
+
+std::vector<double> getB(Vector _v) {
+
+    std::vector<uint32_t> x(_v.di.size());
     std::iota(x.begin(), x.end(), 1);
 
     for (size_t i = 0, jj = 0; i < x.size(); i++) {
@@ -191,10 +245,8 @@ void GenerateGilbert::generateFile(path _path) {
             _v.pr[_v.jg[jj]] += _v.gg[jj] * x[i];
         }
     }
-
-    writeFile(_path, _v, _param, 14);
+    return _v.pr;
 }
-
 
 void writeFile(path _path, Vector _v, symmetric::Param _param, uint8_t _comma) {
     std::ofstream fout(_path / "kuslau.txt");

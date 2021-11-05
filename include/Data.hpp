@@ -37,14 +37,17 @@ protected:
     std::vector<size_t> jg;     /// Номера столбцов
     std::vector<T> pr;          /// Вектор правой части
     std::vector<T> x;           /// Вектор решения
+    size_t iter = 0;            /// Количество итераций
+
 
 public:
     Data(path _path = "file/default") { assert(loadData(_path)); }
     ~Data() { }
 
-    void reset() { std::fill(x.begin(), x.end(), 0); }
+    void reset();
 
     std::vector<T>& getX() { return x; }
+    size_t getIteration() const { return iter; }
 
     std::vector<T> mult(std::vector<T> _V);
     void printX(unsigned int count = 0) const;
@@ -55,6 +58,11 @@ private:
     bool read(path _Path, std::vector<size_t>& _Vec);
 };
 
+template <class T>
+void Data<T>::reset() {
+    std::fill(x.begin(), x.end(), 0);
+    iter = 0;
+}
 
 template <class T>
 std::vector<T> Data<T>::mult(std::vector<T> _Vec) {

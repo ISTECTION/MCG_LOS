@@ -39,7 +39,6 @@ void MCG<T>::none(bool isLog) {
     r = this->pr - this->mult(this->x);
     z = r;
 
-    size_t Iter = 1;
     do {
 
         Az      = this->mult(z);
@@ -51,11 +50,12 @@ void MCG<T>::none(bool isLog) {
         z       = r + betta * z;
         eps     = norm(r) / norm(this->pr);
 
+        this->iter++;
         if (isLog)
-            printLog(Iter++, eps);
+            printLog(this->iter, eps);
 
-    } while (Iter < this->param.max_iter
-          && eps  > this->param.epsilon );
+    } while (this->iter < this->param.max_iter
+                && eps  > this->param.epsilon );
 }
 
 template <class T>
@@ -74,7 +74,6 @@ void MCG<T>::diagonal(bool isLog) {
     r = this->pr - this->mult(this->x);
     z = M * r;
 
-    size_t Iter = 1;
     do {
         Az      = this->mult(z);
         betta   = scalar(M * r, r);
@@ -86,11 +85,12 @@ void MCG<T>::diagonal(bool isLog) {
         z       = Mr + betta * z;
         eps     = norm(r) / norm(this->pr);
 
+        this->iter++;
         if (isLog)
-            printLog(Iter++, eps);
+            printLog(this->iter, eps);
 
-    } while (Iter < this->param.max_iter
-          && eps  > this->param.epsilon );
+    } while (this->iter < this->param.max_iter
+                && eps  > this->param.epsilon );
 }
 
 template <class T>
