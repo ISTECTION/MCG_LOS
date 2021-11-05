@@ -2,8 +2,12 @@
 
 int main(int argc, char* argv[]) {
 
-    Automation _auto(Method::LOS, Matrix::GILBERT, symmetric::Conditional::NONE);
-    _auto.start(10);
+    param.metod  = Method::MCG;
+    param.matrix = Matrix::DIAGONAL_DOMINATION;
+    param.cond   = Conditional::NONE;
+
+    Automation _auto2(param);
+    _auto2.start(10);
 
     return 0;
 }

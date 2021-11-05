@@ -232,6 +232,74 @@ void Generate_Ak::generateFile(path _path) {
     }
 }
 
+
+class Generate_diagDomination
+{
+private:
+    symmetric::Param _param;
+    Vector _v;
+
+    void generateFile(path _path);
+    Vector getStruct(Vector _v, int8_t sign);
+
+public:
+    Generate_diagDomination(path _path, size_t n, double eps, size_t max_iter)
+        : _param { n, eps, max_iter } { generateFile(_path); };
+    ~Generate_diagDomination() { };
+};
+
+void Generate_diagDomination::generateFile(path _path) {
+
+    _path /= std::to_string(_param.n);
+
+    Vector temp = getStruct(_v, -1);
+    std::filesystem::path path_diag = _path / "n";
+    std::filesystem::create_directories(path_diag);
+    writeFile(path_diag, temp, _param);
+
+    for (size_t i = 0; i < temp.gg.size(); i++)
+        temp.gg[i] =  -temp.gg[i];
+    path_diag = _path / "p";
+    std::filesystem::create_directories(path_diag);
+    writeFile(path_diag, temp, _param);
+}
+
+Vector Generate_diagDomination::getStruct(Vector _v, int8_t sign) {
+
+    _v.di.resize(_param.n);
+    _v.pr.resize(_param.n);
+    _v.ig.resize(_param.n + 1);
+
+    _v.ig[0] = 0;
+
+    size_t _Count = 0;
+
+    for (size_t i = 0; i < _param.n; i++) {
+
+        for(size_t j = 0; j < i; j++) {
+
+            if (getBool()) {
+                _Count++;
+                _v.gg.push_back( sign * getRandom(1, 5) );
+                _v.jg.push_back(j);
+            }
+        }
+        _v.ig[i + 1] = _Count;
+    }
+
+    int jj = 0;
+    for (size_t i = 0; i < _param.n; i++)
+        for (size_t j = _v.ig[i]; j < _v.ig[i + 1]; j++, jj++) {
+            _v.di[_v.jg[jj]] += sign * _v.gg[jj];
+            _v.di[i]         += sign * _v.gg[jj];
+        }
+
+    _v.di[0] += 1;
+    _v.pr = getB(_v);
+
+    return _v;
+}
+
 std::vector<double> getB(Vector _v) {
 
     std::vector<uint32_t> x(_v.di.size());
