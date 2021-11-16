@@ -73,8 +73,6 @@ GenerateGilbert gen("file/generator/gilbert", 10, 1E-14, 10000);
 
 При помощи `class Generate_Ak` можно сгенерировать матрицу вида:
 
-<!-- $$A^kx^k=F^k, k = 0, 1, 2, ... $$ -->
-<img src="https://render.githubusercontent.com/render/math?math=A^kx^k=F^k, k = 0, 1, 2, ... "> <br>
 
 
 <!-- $$
@@ -87,9 +85,11 @@ GenerateGilbert gen("file/generator/gilbert", 10, 1E-14, 10000);
 \end{equation*}
 $$ -->
 
-Тут должен быть + 10^{-k} (не могу написать + в формулах)
+<img src="https://render.githubusercontent.com/render/math?math=\begin{equation*}a_{ii}=\begin{cases}-\sum_{i \neq j} a_{ij}, i > 1 \\ -\sum_{i \neq j} { a_{ij} } \pm 10^{-k}, i = 1 \end{cases}\end{equation*}"> <br>
+**В выражение a_ij + 10^{-k} должен быть** ```+```
 
-<img src="https://render.githubusercontent.com/render/math?math=\begin{equation*}a_{ii} = \begin{cases}-\sum_{i \neq j} a_{ij}, i > 1 \\ -\sum_{i \neq j} { a_{ij} } \pm 10^{-k}, i = 1 \end{cases}\end{equation*}"> <br>
+<!-- $$A^kx^k=F^k, k = 0, 1, 2, ... $$ -->
+<img src="https://render.githubusercontent.com/render/math?math=A^kx^k=F^k, k = 0, 1, 2, ... "> <br>
 
 
 <!-- $$a_{ii} \in \{ 0, -1, -2, -3, -4 \} $$ -->
