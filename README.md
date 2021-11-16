@@ -73,9 +73,11 @@ GenerateGilbert gen("file/generator/gilbert", 10, 1E-14, 10000);
 
 При помощи `class Generate_Ak` можно сгенерировать матрицу вида:
 
-$$A^kx^k=F^k, k = 0, 1, 2, ... $$
+<!-- $$A^kx^k=F^k, k = 0, 1, 2, ... $$ -->
+<img src="https://render.githubusercontent.com/render/math?math=A^kx^k=F^k, k = 0, 1, 2, ... "> <br>
 
-$$
+
+<!-- $$
 \begin{equation*}
     a_{ii} =
     \begin{cases}
@@ -83,9 +85,15 @@ $$
         -\sum\limits_{i \neq j}a_{ij} + 10^{-k}, i=1
     \end{cases}
 \end{equation*}
-$$
+$$ -->
 
-$$a_{ii} \in \{ 0, -1, -2, -3, -4 \} $$
+Тут должен быть + 10^{-k} (не могу написать + в формулах)
+
+<img src="https://render.githubusercontent.com/render/math?math=\begin{equation*}a_{ii} = \begin{cases}-\sum_{i \neq j} a_{ij}, i > 1 \\ -\sum_{i \neq j} { a_{ij} } \pm 10^{-k}, i = 1 \end{cases}\end{equation*}"> <br>
+
+
+<!-- $$a_{ii} \in \{ 0, -1, -2, -3, -4 \} $$ -->
+<img src="https://render.githubusercontent.com/render/math?math=a_{ii} \in \{ 0, 1, -2, -3, -4 \}"> <br>
 
 
 ```c++
@@ -98,13 +106,15 @@ Generate_Ak gen("file/generator/Ak", 10, 1e-14, 100000, 20);
 
 При помощи `class Generate_diagDomination` можно сгенерировать матрицу с диагональным преобладанием (доминированием):
 
-$$
-|a_{ii} | \geq \sum\limits_{j \neq i} |a_{ij}|
-$$
+<!-- $$|a_{ii} | \geq \sum\limits_{j \neq i} |a_{ij}|$$ -->
+<img src="https://render.githubusercontent.com/render/math?math=|a_{ii} | \geq \sum_{j \neq i}|a_{ij}|"> <br>
 
-Говорят, что квадратная матрица $$A_{nn}$$
-обладает свойством диагонального преобладания, если для каждого
-$$i=1,\dots,n$$
+
+
+Говорят, что квадратная матрица <!-- $$A_{nn}$$ -->
+<img src="https://render.githubusercontent.com/render/math?math=A_{nn}">
+обладает свойством диагонального преобладания, если для каждого <!-- $$i=1,\dots,n$$ -->
+<img src="https://render.githubusercontent.com/render/math?math=i=1,\dots,n">
 причём хотя бы одно из этих неравенств является строгим. Если все неравенства строгие, то говорят, что матрица обладает строгим диагональным преобладанием.
 
 
