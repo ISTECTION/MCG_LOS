@@ -67,9 +67,9 @@ void Generator::generateFile(path _path) {
         for(size_t j = 0; j < i; j++) {
 
             if (getRandom(0, _chance.from) < _chance.here) {
-                _Count++;
                 _v.gg.push_back(getRandom(MIN, MAX));
                 _v.jg.push_back(j);
+                _Count++;
             }
         }
         _v.ig[i + 1] = _Count;
@@ -97,9 +97,9 @@ void Generator::generateFile(path _path) {
                 _posi[i][j] += _none_Posi[i][k] * _none_Posi[k][j];
         }
 
-    _v.pr = getB(_v);
     _v.gg.clear();
     _v.jg.clear();
+
 
     _Count = 0;
     for (size_t i = 0; i < _param.n; i++) {
@@ -116,6 +116,8 @@ void Generator::generateFile(path _path) {
         }
         _v.ig[i + 1] = _Count;
     }
+
+    _v.pr = getB(_v);
 
     _path /= std::to_string(_param.n);
     _path /= "gg-" + std::to_string(_Count);
@@ -259,6 +261,8 @@ void Generate_diagDomination::generateFile(path _path) {
 
     for (size_t i = 0; i < temp.gg.size(); i++)
         temp.gg[i] =  -temp.gg[i];
+
+    temp.pr = getB(temp);
     path_diag = _path / "p";
     std::filesystem::create_directories(path_diag);
     writeFile(path_diag, temp, _param);

@@ -2,9 +2,9 @@
 
 int main(int argc, char* argv[]) {
 
-    param.metod  = Method::MCG;
+    param.metod  = Method::LOS;
     param.matrix = Matrix::DIAGONAL_DOMINATION;
-    param.cond   = Conditional::NONE;
+    param.cond   = Conditional::HOLLESKY;
 
     Automation _auto2(param);
     _auto2.start(10);

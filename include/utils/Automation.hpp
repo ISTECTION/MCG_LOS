@@ -76,7 +76,7 @@ void Automation::start(size_t _size) {
     ostream << std::setw(5)  << "Size:"
             << std::setw(10) << "Iter:"
             << std::setw(12) << "Time:"
-            << std::setw(24) << "x:"
+            << std::setw(30) << "x:"
             << std::setw(18) << "x` - x:"
             << '\n';
 
@@ -130,7 +130,6 @@ void Automation::step(path _path, std::ostringstream &ostream, size_t _size) {
             break;
         }
     }
-    timer.setTimeEnd();
 
     _expected.resize(x.size());
     std::iota(_expected.begin(), _expected.end(), 1);
@@ -144,14 +143,14 @@ void Automation::step(path _path, std::ostringstream &ostream, size_t _size) {
     for (size_t i = 0; i < x.size(); i++)
     {
         ostream.precision(14);
-        ostream << (i == 0 ? std::setw(24) : std::setw(51))
+        ostream << (i == 0 ? std::setw(30) : std::setw(57))
                 << std::fixed << x[i];
 
         ostream.precision(3);
         ostream << std::setw(18) << std::scientific
                 << _expected[i] - x[i] << '\n';
     }
-    ostream << '\n';
+    ostream << std::setw(76) << '\n';
 }
 
 void Automation::writeFile(path _path, std::ostringstream &ostream) const {
@@ -173,6 +172,9 @@ void Automation::writeFile(path _path, std::ostringstream &ostream) const {
             break;
         case symmetric::Conditional::DIAGONAL:
             _path /= "diag";
+            break;
+        case symmetric::Conditional::HOLLESKY:
+            _path /= "hollesky";
             break;
     }
 

@@ -34,21 +34,20 @@ void MCG<T>::none(bool isLog) {
                    z (this->param.n),
                    Az(this->param.n);
 
-    T alpha, betta, eps;
-
     r = this->pr - this->mult(this->x);
     z = r;
 
+    T alpha, betta, eps;
     do {
 
-        Az      = this->mult(z);
-        betta   = scalar(r, r);
-        alpha   = betta / scalar(Az, z);
-        this->x = this->x + alpha * z;
-        r       = r - alpha * Az;
-        betta   = scalar(r, r) / betta;
-        z       = r + betta * z;
-        eps     = norm(r) / norm(this->pr);
+        Az          = this->mult(z);
+        betta       = scalar(r, r);
+        alpha       = betta / scalar(Az, z);
+        this->x     = this->x + alpha * z;
+        r           = r - alpha * Az;
+        betta       = scalar(r, r) / betta;
+        z           = r + betta * z;
+        eps         = norm(r) / norm(this->pr);
 
         this->iter++;
         if (isLog)
@@ -60,8 +59,8 @@ void MCG<T>::none(bool isLog) {
 
 template <class T>
 void MCG<T>::diagonal(bool isLog) {
-    std::vector<T> r(this->param.n),
-                   z(this->param.n),
+    std::vector<T> r (this->param.n),
+                   z (this->param.n),
                    Az(this->param.n),
                    Mr(this->param.n);
 
@@ -69,21 +68,20 @@ void MCG<T>::diagonal(bool isLog) {
     for (size_t i = 0; i < M.size(); i++)
         M[i] /= this->di[i];
 
-    T alpha, betta, eps;
-
     r = this->pr - this->mult(this->x);
     z = M * r;
 
+    T alpha, betta, eps;
     do {
-        Az      = this->mult(z);
-        betta   = scalar(M * r, r);
-        alpha   = betta / scalar(Az, z);
-        this->x = this->x + alpha * z;
-        r       = r - alpha * Az;
-        Mr      = M * r;
-        betta   = scalar(Mr, r) / betta;
-        z       = Mr + betta * z;
-        eps     = norm(r) / norm(this->pr);
+        Az          = this->mult(z);
+        betta       = scalar(M * r, r);
+        alpha       = betta / scalar(Az, z);
+        this->x     = this->x + alpha * z;
+        r           = r - alpha * Az;
+        Mr          = M * r;
+        betta       = scalar(Mr, r) / betta;
+        z           = Mr + betta * z;
+        eps         = norm(r) / norm(this->pr);
 
         this->iter++;
         if (isLog)
@@ -94,6 +92,34 @@ void MCG<T>::diagonal(bool isLog) {
 }
 
 template <class T>
-void MCG<T>::hollesky(bool isLog) { }
+void MCG<T>::hollesky(bool isLog) {
+    std::vector<T>  r (this->param.n),
+                    z (this->param.n),
+                    Az(this->param.n),
+                    Mr(this->param.n);
 
+    this->convertToLU();
+    r = this->pr - this->mult(this->x);
+    z = this->reverse(this->normal(r));
+
+    T alpha, betta, Eps;
+    do {
+        Az          = this->mult(z);
+        Mr          = this->reverse(this->normal(r));
+        betta       = scalar(Mr, r);
+        alpha       = betta / scalar(Az, z);
+        this->x     = this->x + alpha * z;
+        r           = r - alpha * Az;
+        Mr          = this->reverse(this->normal(r));
+        betta       = scalar(Mr, r) / betta;
+        z           = Mr + betta * z;
+        Eps         = norm(r) / norm(this->pr);
+
+        this->iter++;
+        if (isLog)
+            printLog(this->iter, Eps);
+
+    } while (this->iter < this->param.max_iter
+                && Eps  > this->param.epsilon );
+}
 #endif // _MCG_HPP_

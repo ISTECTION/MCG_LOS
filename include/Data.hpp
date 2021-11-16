@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 _SYMMETRIC_BEG                  /// Пространство имён симметричной матрицы
 
@@ -17,6 +18,14 @@ struct Param {
     size_t n;                   /// n        - Размерность матрицы
     double epsilon;             /// epsilon  - Точность решения СЛАУ
     size_t max_iter;            /// max_iter - MAX количество итераций
+};
+
+template <class T>
+struct Sparse {
+    std::vector<T> di;          /// Диагональные элементы
+    std::vector<T> gg;          /// Внедиагональные элементы
+    std::vector<size_t> ig;     /// Указатели начала строк
+    std::vector<size_t> jg;     /// Номера столбцов
 };
 
 enum class Conditional
@@ -31,15 +40,18 @@ class Data
 {
 protected:
     Param param;
-    std::vector<T> di;          /// Диагональные элементы
-    std::vector<T> gg;          /// Внедиагональные элементы
     std::vector<size_t> ig;     /// Указатели начала строк
     std::vector<size_t> jg;     /// Номера столбцов
+    std::vector<T> di;          /// Диагональные элементы
+    std::vector<T> gg;          /// Внедиагональные элементы
     std::vector<T> pr;          /// Вектор правой части
     std::vector<T> x;           /// Вектор решения
-    size_t iter = 0;            /// Количество итераций
 
+    std::vector<T> di_l;        /// Диагональные элементы LU-разложения
+    std::vector<T> gg_l;        /// Внедиагональные элементы LU-разложения
 
+    std::vector<T> y;           /// Вектор y - для прямого хода
+    size_t iter  = 0;           /// Количество итераций
 public:
     Data(path _path = "file/default") { assert(loadData(_path)); }
     ~Data() { }
@@ -51,6 +63,11 @@ public:
 
     std::vector<T> mult(std::vector<T> _V);
     void printX(unsigned int count = 0) const;
+
+    void convertToLU();                               /// LL^T-разложение
+    std::vector<T> normal (std::vector<T> b);         /// Прямой ход
+    std::vector<T> reverse(std::vector<T> y);         /// Обратный ход
+
 private:
     bool loadData(path _Path);
     void resize(size_t _Mem);
@@ -62,6 +79,59 @@ template <class T>
 void Data<T>::reset() {
     std::fill(x.begin(), x.end(), 0);
     iter = 0;
+}
+
+template <class T>
+void Data<T>::convertToLU() {
+    di_l = di;
+    gg_l = gg;
+
+    for (size_t i = 0; i < param.n; i++) {
+        T sum_diag = 0;
+
+        for (size_t j = ig[i]; j < ig[i + 1] ; j++) {
+            T sum = 0;
+            int jk = ig[jg[j]];
+            int ik = ig[i];
+            while ( (ik < j) && (jk < ig[jg[j] + 1]) )
+            {
+                int l = jg[jk] - jg[ik];
+                if (l == 0) {
+                    sum += gg_l[jk] * gg_l[ik];
+                    ik++; jk++;
+                }
+                jk += (l < 0);
+                ik += (l > 0);
+            }
+            gg_l[j]  -= sum;
+            gg_l[j]  /= di_l[jg[j]];
+            sum_diag += gg_l[j] * gg_l[j];
+        }
+        di_l[i] -= sum_diag;
+        di_l[i] = sqrt(abs(di_l[i]));
+    }
+}
+
+template <class T>
+std::vector<T> Data<T>::normal(std::vector<T> b) {
+    for (size_t i = 0; i < param.n; i++) {
+        for (size_t j = ig[i]; j < ig[i + 1]; j++)
+            b[i] -= gg_l[j] * b[jg[j]];
+
+        b[i] = b[i] / di_l[i];
+    }
+    return b;
+}
+
+template <class T>
+std::vector<T> Data<T>::reverse(std::vector<T> x) {
+    for (int j = param.n - 1; j >= 0; j--) {
+        x[j] = x[j] / di_l[j];
+
+        for (size_t i = ig[j]; i < ig[j + 1]; i++)
+            x[jg[i]] -= gg_l[i] * x[j];
+    }
+    return x;
 }
 
 template <class T>
